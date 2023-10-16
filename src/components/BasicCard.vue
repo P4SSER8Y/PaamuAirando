@@ -16,7 +16,7 @@ const card = cardFactory(CardType.Basic, props.cardId);
         </div>
         <div class="grid grid-cols-1 grid-rows-2 divide-y divide-dotted divide-gray-500">
             <div v-if="!flipped">
-                <HalfCard class="" :card="card" :status="CardStatus.FrontUp"></HalfCard>
+                <HalfCard class="" style="z-index: 0;" :card="card" :status="CardStatus.FrontUp"></HalfCard>
             </div>
             <div v-else>
                 <HalfCard class="" :card="card" :status="CardStatus.BackUp"></HalfCard>
@@ -34,8 +34,8 @@ const card = cardFactory(CardType.Basic, props.cardId);
 <style scoped lang="postcss">
 .angle-mark {
     @apply -rotate-45 fixed;
-    top: -0.5em;
-    left: 0.25em;
+    top: 0.5em;
+    left: 1em;
 
     .triangle {
         width: 0;

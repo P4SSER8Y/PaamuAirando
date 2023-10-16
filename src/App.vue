@@ -10,8 +10,8 @@ for (let i = 1; i <= 16; i++)
 </script>
 
 <template>
-  <div class="flex flex-column flex-wrap items-center justify-center gap-x-5 gap-y-5">
-    <Card v-for="idx in ids" :cardId="idx" :cardType="CardType.Basic" :rotated="true" :flipped="false"></Card>
+  <div class="items-center justify-center justify-items-center gap-x-5 gap-y-5 relative flex flex-row flex-wrap">
+    <Card v-for="(item, index) in ids" class="shrink-0" :cardId="item" :cardType="CardType.Basic" :rotated="true" :flipped="true" :z="index"></Card>
   </div>
 </template>
 

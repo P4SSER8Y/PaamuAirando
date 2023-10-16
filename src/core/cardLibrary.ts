@@ -1,5 +1,5 @@
 import { Assets, AssetType, AssetCandidates} from "./asset";
-import { Card, CardAction, CardActionType, CardAssetStatus, CardStatus } from "./card";
+import { Card, CardAction, CardActionType, CardStatus } from "./card";
 
 export enum CardType {
     Basic,
