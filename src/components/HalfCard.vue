@@ -2,6 +2,8 @@
 import { AssetType, Assets } from '../core/asset';
 import { Card, CardActionType, CardStatus } from '../core/card';
 import EmojiIcon from './EmojiIcon.vue'
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const props = defineProps<{ card: Card, status: CardStatus }>();
 
@@ -53,7 +55,7 @@ const actions = props.card.actions[props.status] ?? [];
                 <EmojiIcon v-else style="visibility: hidden;" icon="⏫︎">0</EmojiIcon>
             </div>
             <div class="grid grid-flow-row auto-rows-max">
-                <div v-for="action in actions.filter(x=>x)" class="flex flex-row justify-center space-x-3">
+                <div v-for="action in actions.filter(x => x)" class="flex flex-row justify-center space-x-3">
                     <EmojiIcon :icon="MAP_ACTION_TYPE_TO_ICON.get(action.type)!"></EmojiIcon>
                     <span v-if="action.cost.group.length > 0" class="flex flex-row justify-center justify-items-center">
                         <span v-for="(group, group_index) in action.cost.group" class="flex flex-row justify-center gap-2">
@@ -69,7 +71,7 @@ const actions = props.card.actions[props.status] ?? [];
                         </span>
                     </span>
                     <span v-else>
-                        Free
+                        {{ $t('card.base.free') }}
                     </span>
                 </div>
             </div>
