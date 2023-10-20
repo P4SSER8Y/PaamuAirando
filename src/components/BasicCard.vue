@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { CardStatus } from '../core/card';
+import { CardActionType, CardStatus } from '../core/card';
 import { CardType, cardFactory } from '../core/cardLibrary';
 import HalfCard from './HalfCard.vue';
+
+const emits = defineEmits<{
+    action: [cardId: string, status: CardStatus, action: CardActionType]
+}>();
 
 const props = defineProps<{ cardId: number, flipped: boolean }>();
 
@@ -16,16 +20,24 @@ const card = cardFactory(CardType.Basic, props.cardId);
         </div>
         <div class="grid grid-cols-1 grid-rows-2 divide-y divide-dotted divide-gray-500">
             <div v-if="!flipped">
-                <HalfCard class="" style="z-index: 0;" :card="card" :status="CardStatus.FrontUp"></HalfCard>
+                <HalfCard class="" style="z-index: 0;" :card="card" :status="CardStatus.FrontUp"
+                    @action="(cardId, status, action) => $emit('action', cardId, status, action)">
+                </HalfCard>
             </div>
             <div v-else>
-                <HalfCard class="" :card="card" :status="CardStatus.BackUp"></HalfCard>
+                <HalfCard class="" :card="card" :status="CardStatus.BackUp"
+                    @action="(cardId, status, action) => $emit('action', cardId, status, action)">
+                </HalfCard>
             </div>
             <div v-if="!flipped">
-                <HalfCard class="rotate-180" :card="card" :status="CardStatus.FrontDown"></HalfCard>
+                <HalfCard class="rotate-180" :card="card" :status="CardStatus.FrontDown"
+                    @action="(cardId, status, action) => $emit('action', cardId, status, action)">
+                </HalfCard>
             </div>
             <div v-else>
-                <HalfCard class="rotate-180" :card="card" :status="CardStatus.BackDown"></HalfCard>
+                <HalfCard class="rotate-180" :card="card" :status="CardStatus.BackDown"
+                    @action="(cardId, status, action) => $emit('action', cardId, status, action)">
+                </HalfCard>
             </div>
         </div>
     </div>

@@ -2,21 +2,25 @@
 import { CardType } from "../core/cardLibrary";
 import BasicCard from "./BasicCard.vue";
 
-defineProps<{
+const props = defineProps<{
     cardType: CardType;
     cardId: number;
     rotated: boolean;
     flipped: boolean;
+    paid: boolean;
     z: number;
 }>();
 
 const MAP = new Map([[CardType.Basic, BasicCard]]);
+const rotated_angle = `rotate(${(props.rotated ? -1 : 1) * (props.paid ? 90 : 0)}deg)`;
 </script>
 
 <template>
     <div class="card-container">
-        <component :is="MAP.get(cardType)" class="card card-front" :cardId="cardId" :flipped="false"> </component>
-        <component :is="MAP.get(cardType)" class="card card-back" :cardId="cardId" :flipped="true"> </component>
+        <component :is="MAP.get(cardType)" class="card card-front" :cardId="cardId" :flipped="false"
+            @action="(a, b, c) => console.log(a, b, c)"> </component>
+        <component :is="MAP.get(cardType)" class="card card-back" :cardId="cardId" :flipped="true"
+            @action="(a, b, c) => console.log(a, b, c)"> </component>
     </div>
 </template>
 
@@ -25,7 +29,7 @@ const MAP = new Map([[CardType.Basic, BasicCard]]);
     @apply transition duration-1000 w-64 shadow-2xl aspect-[2/3];
     display: block;
     transform-style: preserve-3d;
-    transform: scale(1);
+    transform: scale(1) v-bind('rotated_angle');
     perspective: 9999px;
 }
 
@@ -44,12 +48,6 @@ const MAP = new Map([[CardType.Basic, BasicCard]]);
         transform: rotateY(180deg);
         z-index: 999;
     }
-}
-
-.card-container:hover {
-    animation-name: flip;
-    animation-duration: 1s;
-    transform: rotateY(180deg);
 }
 
 .card {

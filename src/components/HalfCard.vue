@@ -3,6 +3,10 @@ import { AssetType, Assets } from '../core/asset';
 import { Card, CardActionType, CardStatus } from '../core/card';
 import EmojiIcon from './EmojiIcon.vue'
 import { useI18n } from 'vue-i18n';
+
+const emits = defineEmits<{
+    action: [cardId: string, status: CardStatus, action: CardActionType]
+}>();
 const { t } = useI18n();
 
 const props = defineProps<{ card: Card, status: CardStatus }>();
@@ -55,7 +59,8 @@ const actions = props.card.actions[props.status] ?? [];
                 <EmojiIcon v-else style="visibility: hidden;" icon="⏫︎">0</EmojiIcon>
             </div>
             <div class="grid grid-flow-row auto-rows-max">
-                <div v-for="action in actions.filter(x => x)" class="flex flex-row justify-center space-x-3">
+                <div v-for="action in actions.filter(x => x)" class="action-button flex flex-row justify-center space-x-3" 
+                    @click="$emit('action', props.card.id, props.status, action.type)">
                     <EmojiIcon :icon="MAP_ACTION_TYPE_TO_ICON.get(action.type)!"></EmojiIcon>
                     <span v-if="action.cost.group.length > 0" class="flex flex-row justify-center justify-items-center">
                         <span v-for="(group, group_index) in action.cost.group" class="flex flex-row justify-center gap-2">
@@ -79,4 +84,21 @@ const actions = props.card.actions[props.status] ?? [];
     </div>
 </template>
 
-<style scoped></style>
+<style scoped lang="postcss">
+
+.action-button {
+    user-select: none;
+}
+
+.action-button:hover {
+    @apply transition;
+    transform: scale(1.2);
+    cursor: grab;
+}
+        
+.action-button:active {
+    @apply transition;
+    transform: scale(0.9);
+    cursor: grabbing;
+}
+</style>
