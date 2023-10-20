@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import { computed, reactive, ref, watch } from 'vue';
 import { AssetType, Assets } from '../core/asset';
-import { Card, CardActionType, CardStatus } from '../core/card';
+import { BasicCard, CardActionType, CardStatus } from '../core/card';
 import EmojiIcon from './EmojiIcon.vue'
 import { useI18n } from 'vue-i18n';
 
-const emits = defineEmits<{
-    action: [cardId: string, status: CardStatus, action: CardActionType]
-}>();
-const { t } = useI18n();
+const emits = defineEmits<{ update: [] }>();
 
-const props = defineProps<{ card: Card, status: CardStatus }>();
+useI18n();
+
+const props = defineProps<{ card: BasicCard, status: CardStatus, paid: boolean, actionable: boolean}>();
+
+watch(props, () => console.log(props));
 
 const MAP_ASSET_TYPE_TO_ICON = new Map([
     [AssetType.Fish, "🐟"],
@@ -34,12 +36,26 @@ function expandAssets(assets: Assets): Array<AssetType> {
     return t;
 }
 
+function move(valid: boolean, actionType: CardActionType): void {
+    if (!valid) {
+        return;
+    }
+    if (props.status != props.card.cardStatus) {
+        console.log(`prop.status=${CardStatus[props.status]}, cardStatus=${CardStatus[props.card.cardStatus]}`);
+        return;
+    }
+    if (props.card.move(actionType)) {
+        emits('update');
+    }
+}
+
 const actions = props.card.actions[props.status] ?? [];
 </script>
 
 <template>
     <div class="w-[100%] h-[100%] flex flex-col justify-start justify-items-center">
-        <div class="h-1/3 flex flex-row flex-nowrap basis-1/8 self-center justify-self-start text-2xl">
+        <div class="h-1/3 flex flex-row flex-nowrap basis-1/8 self-center justify-self-start text-2xl"
+            :class="paid ? 'action-button' : ''" @click="move(paid, CardActionType.Pay)">
             <span v-for="(item, item_index) in props.card.getAssets(status)?.group"
                 class="flex flex-row flex-nowrap shrink justify-center justify-self-center">
                 <span v-if="item_index > 0" class="text-center mx-1">
@@ -59,8 +75,8 @@ const actions = props.card.actions[props.status] ?? [];
                 <EmojiIcon v-else style="visibility: hidden;" icon="⏫︎">0</EmojiIcon>
             </div>
             <div class="grid grid-flow-row auto-rows-max">
-                <div v-for="action in actions.filter(x => x)" class="action-button flex flex-row justify-center space-x-3" 
-                    @click="$emit('action', props.card.id, props.status, action.type)">
+                <div v-for="action in actions.filter(x => x)" class="flex flex-row justify-center space-x-3"
+                    :class="actionable ? 'action-button' : ''" @click="move(actionable, action.type)">
                     <EmojiIcon :icon="MAP_ACTION_TYPE_TO_ICON.get(action.type)!"></EmojiIcon>
                     <span v-if="action.cost.group.length > 0" class="flex flex-row justify-center justify-items-center">
                         <span v-for="(group, group_index) in action.cost.group" class="flex flex-row justify-center gap-2">
@@ -85,7 +101,6 @@ const actions = props.card.actions[props.status] ?? [];
 </template>
 
 <style scoped lang="postcss">
-
 .action-button {
     user-select: none;
 }
@@ -95,7 +110,7 @@ const actions = props.card.actions[props.status] ?? [];
     transform: scale(1.2);
     cursor: grab;
 }
-        
+
 .action-button:active {
     @apply transition;
     transform: scale(0.9);

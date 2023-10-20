@@ -1,11 +1,6 @@
 import { Assets, AssetType, AssetCandidates } from "./asset";
-import { Card, CardAction, CardActionType, CardStatus } from "./card";
+import { BasicCard, CardAction, CardActionType, CardStatus, CardType } from "./card";
 import i18n from "../i18n";
-
-export enum CardType {
-  Basic,
-  Feet,
-}
 
 export function cardFactory(type: CardType, id: number): Card | null {
   switch (type) {
@@ -16,19 +11,19 @@ export function cardFactory(type: CardType, id: number): Card | null {
   }
 }
 
-function basicCardFactory(id: number): Card | null {
+function basicCardFactory(id: number): BasicCard | null {
   let stone = new Assets(new Map([[AssetType.Stone, 1]]));
   let stone2 = stone.repeat(2);
   let log = new Assets(new Map([[AssetType.Log, 1]]));
   let log2 = log.repeat(2);
   let fish = new Assets(new Map([[AssetType.Fish, 1]]));
   let fish2 = fish.repeat(2);
-  let card: Card | null = null;
+  let card: BasicCard | null = null;
   switch (id) {
     case 1:
     case 2:
     case 3:
-      card = new Card(`${id}`, i18n.global.t("card.base.canoeHouse"));
+      card = new BasicCard(`${id}`, i18n.global.t("card.base.canoeHouse"));
       card.register(
         CardStatus.FrontUp,
         0,
@@ -78,7 +73,7 @@ function basicCardFactory(id: number): Card | null {
     case 4:
     case 5:
     case 6:
-      card = new Card(`${id}`, i18n.global.t("card.base.logger"));
+      card = new BasicCard(`${id}`, i18n.global.t("card.base.logger"));
       card.register(
         CardStatus.FrontUp,
         0,
@@ -123,7 +118,7 @@ function basicCardFactory(id: number): Card | null {
     case 7:
     case 8:
     case 9:
-      card = new Card(`${id}`, i18n.global.t('card.base.quarry'));
+      card = new BasicCard(`${id}`, i18n.global.t('card.base.quarry'));
       card.register(
         CardStatus.FrontUp,
         0,
@@ -170,7 +165,7 @@ function basicCardFactory(id: number): Card | null {
       break;
 
     case 10:
-      card = new Card(`${id}`, i18n.global.t("card.base.market"));
+      card = new BasicCard(`${id}`, i18n.global.t("card.base.market"));
       card.register(
         CardStatus.FrontUp,
         0,
@@ -223,7 +218,7 @@ function basicCardFactory(id: number): Card | null {
       break;
 
     case 11:
-      card = new Card(`${id}`, i18n.global.t("card.base.tradeHouse"));
+      card = new BasicCard(`${id}`, i18n.global.t("card.base.tradeHouse"));
       card.register(
         CardStatus.FrontUp,
         0,
@@ -287,7 +282,7 @@ function basicCardFactory(id: number): Card | null {
       break;
 
     case 12:
-      card = new Card(`${id}`, i18n.global.t("card.base.toolMaker"));
+      card = new BasicCard(`${id}`, i18n.global.t("card.base.toolMaker"));
       card.register(
         CardStatus.FrontUp,
         0,
@@ -335,7 +330,7 @@ function basicCardFactory(id: number): Card | null {
 
     case 13:
     case 14:
-      card = new Card(`${id}`, i18n.global.t("card.base.housing"));
+      card = new BasicCard(`${id}`, i18n.global.t("card.base.housing"));
       card.register(
         CardStatus.FrontUp,
         0,
@@ -377,7 +372,7 @@ function basicCardFactory(id: number): Card | null {
 
     case 15:
     case 16:
-      card = new Card(`${id}`, i18n.global.t("card.base.temple"));
+      card = new BasicCard(`${id}`, i18n.global.t("card.base.temple"));
       card.register(
         CardStatus.FrontUp,
         0,
@@ -422,7 +417,7 @@ function basicCardFactory(id: number): Card | null {
   return card;
 }
 
-export function featCardFactory(): Card | null {
-  let card: Card | null = null;
+export function featCardFactory(): BasicCard | null {
+  let card: BasicCard | null = null;
   return card;
 }

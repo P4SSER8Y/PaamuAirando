@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Ref, ref } from 'vue';
-import Card from './components/Card.vue';
-import { CardType } from './core/cardLibrary';
+import CardUI from './components/CardUI.vue';
+import { cardFactory } from './core/cardLibrary';
+import { CardType } from './core/card';
 
 let ids: number[] = [];
 let isPaid: any[] = [];
@@ -17,9 +18,8 @@ for (let i = 1; i <= 16; i++) {
 
 <template>
   <div class="items-center justify-center justify-items-center gap-x-5 gap-y-5 relative flex flex-row flex-wrap">
-    <Card v-for="(item, index) in ids" class="shrink-0" :cardId="item" :cardType="CardType.Basic"
-      :rotated="isRotated[index].value" :paid="isPaid[index].value" :flipped="isFlipped[index].value" :z="index">
-    </Card>
+    <CardUI v-for="(item, index) in ids" class="shrink-0" :card="cardFactory(CardType.Basic, item)">
+    </CardUI>
   </div>
 </template>
 

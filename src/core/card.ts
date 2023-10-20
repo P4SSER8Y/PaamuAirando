@@ -1,5 +1,12 @@
 import { AssetCandidates } from "./asset";
 
+export enum CardType {
+  Unknown,
+  Basic,
+  Round,
+  Feet,
+}
+
 export enum CardStatus {
   FrontUp,
   FrontDown,
@@ -41,7 +48,19 @@ export class CardAction {
 export class Card {
   id: string;
   name: string;
+  cardType: CardType;
   cardStatus: CardStatus;
+  paidStatus: boolean;
+  constructor(id: string, name: string) {
+    this.id = id;
+    this.name = name;
+    this.cardType = CardType.Unknown;
+    this.cardStatus = CardStatus.FrontUp;
+    this.paidStatus = false;
+  }
+}
+
+export class BasicCard extends Card {
   assetsStatus: CardAssetStatus;
   actions: Array<Array<CardAction>>;
   levels: Array<number>;
@@ -49,13 +68,11 @@ export class Card {
   assets: Array<AssetCandidates>;
 
   constructor(id: string, name: string) {
-    this.id = id;
-    this.name = name;
-    this.cardStatus = CardStatus.FrontUp;
+    super(id, name);
+    this.cardType = CardType.Basic;
     this.assetsStatus = CardAssetStatus.Idle;
     this.actions = new Array(CardStatus.Length);
-    for (let i = 0; i < CardStatus.Length; i++)
-    {
+    for (let i = 0; i < CardStatus.Length; i++) {
       this.actions[i] = new Array(CardActionType.Length).fill(null);
     }
     this.levels = new Array(CardStatus.Length);
@@ -92,9 +109,11 @@ export class Card {
     for (let idx = 0; idx < CardStatus.Length; idx++) {
       if (this.levels[idx] === undefined) continue;
       str.push(
-        `${CardStatus[idx]} (level: ${ this.levels[idx] }, stars: ${this.stars[idx]}) => ${this.assets [idx] ?.toString()}`
+        `${CardStatus[idx]} (level: ${this.levels[idx]}, stars: ${
+          this.stars[idx]
+        }) => ${this.assets[idx]?.toString()}`
       );
-      for (let item of this.actions[idx].filter(x => x)) {
+      for (let item of this.actions[idx].filter((x) => x)) {
         str.push(`    ${item.toString()}`);
       }
     }
@@ -114,7 +133,53 @@ export class Card {
     return this.stars[status] ?? 0;
   }
 
-  move(_type: CardActionType) {}
+  move(type: CardActionType): boolean {
+    const MAP_NEXT_FLIP = new Map([
+      [CardStatus.FrontUp, CardStatus.BackUp],
+      [CardStatus.FrontDown, CardStatus.BackDown],
+      [CardStatus.BackUp, CardStatus.FrontUp],
+      [CardStatus.BackDown, CardStatus.FrontDown],
+    ]);
+    const MAP_NEXT_ROTATE = new Map([
+      [CardStatus.FrontUp, CardStatus.FrontDown],
+      [CardStatus.FrontDown, CardStatus.FrontUp],
+      [CardStatus.BackUp, CardStatus.BackDown],
+      [CardStatus.BackDown, CardStatus.BackUp],
+    ]);
+    if (this.actions[this.cardStatus][type]) {
+      switch (type) {
+        case CardActionType.Pay:
+          this.paidStatus = !this.paidStatus;
+          break;
+        case CardActionType.Flip:
+          if (MAP_NEXT_FLIP.get(this.cardStatus))
+          {
+            this.cardStatus = MAP_NEXT_FLIP.get(this.cardStatus);
+          }
+          else 
+          {
+            return false;
+          }
+          break;
+        case CardActionType.Rotate:
+          if (MAP_NEXT_ROTATE.get(this.cardStatus))
+          {
+            this.cardStatus = MAP_NEXT_ROTATE.get(this.cardStatus);
+          }
+          else 
+          {
+            return false;
+          }
+          break;
+        default:
+          return false;
+          break;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 export class RoundCard extends Card {
